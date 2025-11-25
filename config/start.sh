@@ -29,4 +29,4 @@ echo Starting Dockercraft
 cd /srv/Server
 dockercraft &
 sleep 5
-./Cuberite
+/srv/Cuberite

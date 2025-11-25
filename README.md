@@ -1,3 +1,10 @@
+### TL;DR
+
+- Works with Minecraft versions `1.8 - 1.12.2`.
+- Run the server with `make build serve`.
+
+### Original README
+
 # Dockercraft
 
 ![Dockercraft](https://github.com/docker/dockercraft/raw/master/docs/img/logo.png?raw=true)
