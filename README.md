@@ -2,17 +2,12 @@
 
 - Works with Minecraft versions `1.8 - 1.12.2`.
 - Run :
-	```
-	docker build -t dockercraft .
-	```
-	then
-	
-	```	
-	docker run -t -i -d -p 25565:25565 \
-	-v /var/run/docker.sock:/var/run/docker.sock \
-	--name dockercraft \
-	dockercraft
-	```
+	- ```make build``` to build the image (the first time)
+	- ```make serve``` to run the container
+	- ```make serve-no-rm``` to run the container without removing it when it stops
+	- ```make delete``` to delete the container
+	- ```make logs``` to see the logs of the container
+	- ```make clean``` to remove the image
 
 ### Original README
 
