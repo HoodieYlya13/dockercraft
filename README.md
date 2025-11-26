@@ -4,7 +4,9 @@
 - Run :
 	```
 	docker build -t dockercraft .
-	
+	```
+	then
+	```	
 	docker run -t -i -d -p 25565:25565 \
 	-v /var/run/docker.sock:/var/run/docker.sock \
 	--name dockercraft \
