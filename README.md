@@ -5,6 +5,7 @@
 	- `make build` to build the image (the first time)
 	- `make serve` to run the container
 	- `make serve-no-rm` to run the container without removing it when it stops
+	- `make stop` to stop the container
 	- `make delete` to delete the container
 	- `make logs` to see the logs of the container
 	- `make clean` to remove the image

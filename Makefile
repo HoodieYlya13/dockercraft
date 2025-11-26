@@ -39,7 +39,8 @@ build:
 
 serve: DOCKER_RM = --rm
 serve serve-no-rm:
-	@docker run -it -d ${DOCKER_RM} \
+	@echo "+ $@"
+	@docker run -it ${DOCKER_RM} \
 		--name ${CONTAINER_NAME} \
 		-p 25565:25565 \
 		-v /var/run/docker.sock:/var/run/docker.sock \
@@ -48,8 +49,12 @@ serve serve-no-rm:
 logs:
 	@docker logs ${CONTAINER_NAME}
 
+stop:
+	@docker stop ${CONTAINER_NAME}
+
 delete:
 	@docker rm -f ${CONTAINER_NAME}
 
 clean:
-	@docker rmi ${IMAGE_NAME}
+	@docker rmi ${IMAGE_NAME} || true
+	@docker rm -f ${CONTAINER_NAME} || true
