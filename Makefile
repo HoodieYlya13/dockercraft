@@ -35,7 +35,14 @@ vet:
 
 build:
 	@echo "+ $@"
-	@docker build -t ${IMAGE_NAME} .
+	@echo "Building for $(TARGETARCH)"
+	@docker build --build-arg TARGETARCH=$(TARGETARCH) -t ${IMAGE_NAME} .
+
+build-x86:
+	@$(MAKE) build TARGETARCH=amd64
+
+build-arm64:
+	@$(MAKE) build TARGETARCH=arm64
 
 serve: DOCKER_RM = --rm
 serve serve-no-rm:
