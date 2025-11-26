@@ -1,7 +1,15 @@
 ### TL;DR
 
 - Works with Minecraft versions `1.8 - 1.12.2`.
-- Run the server with `make build serve`.
+- Run :
+	```
+	docker build -t dockercraft .
+	
+	docker run -t -i -d -p 25565:25565 \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	--name dockercraft \
+	dockercraft
+	```
 
 ### Original README
 
