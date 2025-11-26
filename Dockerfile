@@ -29,7 +29,7 @@ RUN apk add --no-cache wget tar git && \
   git clone https://github.com/cuberite/TransAPI.git /srv/Server/Plugins/TransAPI && \
   git clone https://github.com/cuberite/ChatLog.git /srv/Server/Plugins/ChatLog
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && \
   apt-get install -y ca-certificates && \
