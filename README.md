@@ -9,6 +9,8 @@
 	- `make logs` to see the logs of the container
 	- `make clean` to remove the image
 
+---
+
 ### Original README
 
 # Dockercraft
