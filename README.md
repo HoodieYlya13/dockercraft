@@ -2,12 +2,19 @@
 
 - Works with Minecraft versions `1.8 - 1.12.2`.
 - Run :
-	- `make build` to build the image (the first time)
-	- `make serve` to run the container
-	- `make serve-no-rm` to run the container without removing it when it stops
-	- `make delete` to delete the container
-	- `make logs` to see the logs of the container
-	- `make clean` to remove the image
+
+  - `make build` to build the image (the first time)
+  - if auto-detecting architecture fails, you can use :
+
+    - `make build-x86` to build the image for x86_64 architecture
+    - `make build-arm64` to build the image for arm64 architecture
+
+  - `make serve` to run the container
+  - `make serve-no-rm` to run the container without removing it when it stops
+  - `make stop` to stop the container
+  - `make delete` to delete the container
+  - `make logs` to see the logs of the container
+  - `make clean` to remove the image
 
 ---
 
@@ -25,54 +32,56 @@ A simple Minecraft Docker client, to visualize and manage Docker containers.
 
 > WARNING: Please use Dockercraft on your local machine only.
 > It currently doesn't support authentication.
-> Every player should be considered a root user! 
+> Every player should be considered a root user!
 
 ## How to run Dockercraft
 
 1. **Install Minecraft: [minecraft.net](https://minecraft.net)**
 
-	The Minecraft client hasn't been modified, just get the official release.
+   The Minecraft client hasn't been modified, just get the official release.
 
 2. **Pull or build Dockercraft image:** (an official image will be available soon)
 
-	```
-	docker pull gaetan/dockercraft
-	```
-	or
+   ```
+   docker pull gaetan/dockercraft
+   ```
 
-	```
-	git clone git@github.com:docker/dockercraft.git
-	docker build -t gaetan/dockercraft dockercraft
-	```
+   or
+
+   ```
+   git clone git@github.com:docker/dockercraft.git
+   docker build -t gaetan/dockercraft dockercraft
+   ```
+
 3. **Run Dockercraft container:**
 
-	```
-	docker run -t -i -d -p 25565:25565 \
-	-v /var/run/docker.sock:/var/run/docker.sock \
-	--name dockercraft \
-	gaetan/dockercraft
-	```
+   ```
+   docker run -t -i -d -p 25565:25565 \
+   -v /var/run/docker.sock:/var/run/docker.sock \
+   --name dockercraft \
+   gaetan/dockercraft
+   ```
 
-	Mounting `/var/run/docker.sock` inside the container is necessary to send requests to the Docker remote API.
+   Mounting `/var/run/docker.sock` inside the container is necessary to send requests to the Docker remote API.
 
-	The default port for a Minecraft server is *25565*, if you prefer a different one: `-p <port>:25565`
+   The default port for a Minecraft server is _25565_, if you prefer a different one: `-p <port>:25565`
 
 4. **Open Minecraft > Multiplayer > Add Server**
 
-	The server address is the IP of Docker host. No need to specify a port if you used the default one.
+   The server address is the IP of Docker host. No need to specify a port if you used the default one.
 
-	If you're using [Docker Machine](https://docs.docker.com/machine/install-machine/): `docker-machine ip <machine_name>`
+   If you're using [Docker Machine](https://docs.docker.com/machine/install-machine/): `docker-machine ip <machine_name>`
 
 5. **Join Server!**
 
-	You should see at least one container in your world, which is the one hosting your Dockercraft server.
+   You should see at least one container in your world, which is the one hosting your Dockercraft server.
 
-	You can start, stop and remove containers interacting with levers and buttons. Some Docker commands are also supported directly via Minecraft's chat window, which is displayed by pressing the `T` key (default) or `/` key.
-	
+   You can start, stop and remove containers interacting with levers and buttons. Some Docker commands are also supported directly via Minecraft's chat window, which is displayed by pressing the `T` key (default) or `/` key.
+
 > A command always starts with a `/`.
-> 
+>
 > If you open the prompt using the `/` key, it will be prefilled with a `/` character, but if you open it with the `T` key, it will not be prefilled and you will have to type a `/` yourself before typing your docker command.
-> 
+>
 > example: `/docker run redis`.
 
 ![Dockercraft](https://github.com/docker/dockercraft/raw/master/docs/img/landscape.png?raw=true)
@@ -85,6 +94,7 @@ If so, you are in luck!
 Dockercraft can be customised to use any of the [Biomes](https://github.com/cuberite/cuberite/blob/7f8a4eb7264a12ca2035b4e4d412485e01f309d4/src/BiomeDef.cpp#L17) and [Finishers](https://github.com/cuberite/cuberite/blob/7f8a4eb7264a12ca2035b4e4d412485e01f309d4/src/Generating/ComposableGenerator.cpp#L299) supported by Cuberite!
 
 You can pass these additional arguments to your `docker run` command:
+
 ```
 docker run -t -i -d -p 25565:25565 \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -129,7 +139,7 @@ Also, we're using [Magicavoxel](https://ephtracy.github.io/) to do these nice pr
 
 ![Dockercraft](https://github.com/docker/dockercraft/raw/master/docs/img/voxelproto.jpg?raw=true)
 
-You can find our Magicavoxel patterns in [that folder](![Dockercraft](https://github.com/docker/dockercraft/tree/master/docs/magicavoxel)).
+You can find our Magicavoxel patterns in [that folder](<![Dockercraft](https://github.com/docker/dockercraft/tree/master/docs/magicavoxel)>).
 
 To get fresh news, follow our Twitter account: [@dockercraft](https://twitter.com/dockercraft).
 
@@ -170,6 +180,7 @@ function PlayerJoined(Player)
 	r = os.execute("goproxy containers")
 end
 ```
+
 ## Contributing
 
 Want to hack on Dockercraft? [Docker's contributions guidelines](https://github.com/docker/docker/blob/master/CONTRIBUTING.md) apply.

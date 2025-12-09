@@ -13,8 +13,9 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
@@ -90,7 +91,7 @@ type CPUStats struct {
 // Init initializes a Daemon
 func (d *Daemon) Init() error {
 	var err error
-	d.Client, err = client.NewEnvClient()
+	d.Client, err = client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -134,7 +135,7 @@ func (d *Daemon) Serve() {
 func (d *Daemon) StartMonitoringEvents() {
 	log.Info("Monitoring Docker Events")
 	filters := filters.NewArgs()
-	filters.Add("type", events.ContainerEventType)
+	filters.Add("type", string(events.ContainerEventType))
 	opts := types.EventsOptions{
 		Filters: filters,
 	}
@@ -384,7 +385,7 @@ func (d *Daemon) execDockerCmd(args []string) {
 // listContainers handles and reply to http requests having the path "/containers"
 func (d *Daemon) listContainers() {
 	go func() {
-		containers, err := d.Client.ContainerList(context.Background(), types.ContainerListOptions{All: true})
+		containers, err := d.Client.ContainerList(context.Background(), container.ListOptions{All: true})
 		if err != nil {
 			log.Println(err.Error())
 			return

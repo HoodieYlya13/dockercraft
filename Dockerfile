@@ -1,31 +1,50 @@
-FROM alpine:3.6 AS wget
-RUN apk add --no-cache ca-certificates wget tar
+FROM golang:1.23-bookworm AS builder
+WORKDIR /app
 
-FROM wget AS docker
-ARG DOCKER_VERSION=17.09.0-ce
-RUN wget -qO- https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz | \
+COPY go.mod ./
+RUN go mod download
+
+COPY . .
+
+ARG TARGETARCH=arm64
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -mod=mod -o dockercraft .
+
+FROM alpine:3.19 AS docker-cli
+ARG DOCKER_VERSION=25.0.3
+ARG TARGETARCH=arm64
+RUN apk add --no-cache wget tar && \
+  if [ "$TARGETARCH" = "amd64" ]; then ARCH="x86_64"; else ARCH="aarch64"; fi && \
+  wget -qO- https://download.docker.com/linux/static/stable/${ARCH}/docker-${DOCKER_VERSION}.tgz | \
   tar -xvz --strip-components=1 -C /bin
 
-FROM wget AS cuberite
+FROM alpine:3.19 AS cuberite-downloader
 WORKDIR /srv
-RUN wget -qO- "https://download.cuberite.org/linux-x86_64/Cuberite.tar.gz" |\
-  tar -xzf -
+ARG TARGETARCH=arm64
+RUN apk add --no-cache wget tar git && \
+  if [ "$TARGETARCH" = "amd64" ]; then ARCH="x86_64"; else ARCH="aarch64"; fi && \
+  wget -qO- "https://download.cuberite.org/linux-${ARCH}/Cuberite.tar.gz" | \
+  tar -xzf - && \
+  mkdir -p /srv/Server/Plugins && \
+  git clone https://github.com/cuberite/Core.git /srv/Server/Plugins/Core && \
+  git clone https://github.com/cuberite/TransAPI.git /srv/Server/Plugins/TransAPI && \
+  git clone https://github.com/cuberite/ChatLog.git /srv/Server/Plugins/ChatLog
 
-FROM golang:1.9 AS dockercraft
-WORKDIR /go/src/github.com/docker/dockercraft
-COPY . .
-RUN go install
+FROM debian:trixie-slim
 
-FROM debian:trixie
-RUN apt-get update; apt-get install -y ca-certificates
-COPY --from=dockercraft /go/bin/dockercraft /bin
-COPY --from=docker /bin/docker /bin
-COPY --from=cuberite /srv /srv
+RUN apt-get update && \
+  apt-get install -y ca-certificates && \
+  rm -rf /var/lib/apt/lists/*
 
-# Copy Dockercraft config and plugin
+COPY --from=builder /app/dockercraft /bin/dockercraft
+COPY --from=docker-cli /bin/docker /bin/docker
+COPY --from=cuberite-downloader /srv /srv
+
 COPY ./config /srv/Server
 COPY ./docs/img/logo64x64.png /srv/Server/favicon.png
 COPY ./Docker /srv/Server/Plugins/Docker
 
 EXPOSE 25565
+
+WORKDIR /srv/Server
+
 ENTRYPOINT ["/srv/Server/start.sh"]

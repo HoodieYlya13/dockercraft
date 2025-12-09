@@ -8,6 +8,17 @@ IMAGE_NAME = dockercraft
 CONTAINER_NAME = dockercraft
 PACKAGES=$(shell go list ./... | grep -v vendor)
 
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
+	TARGETARCH ?= amd64
+else ifeq ($(UNAME_M),aarch64)
+	TARGETARCH ?= arm64
+else ifeq ($(UNAME_M),arm64)
+	TARGETARCH ?= arm64
+else
+	TARGETARCH ?= amd64
+endif
+
 all: test
 
 test-local: install-deps fmt lint vet
@@ -35,11 +46,19 @@ vet:
 
 build:
 	@echo "+ $@"
-	@docker build -t ${IMAGE_NAME} .
+	@echo "Building for $(TARGETARCH)"
+	@docker build --build-arg TARGETARCH=$(TARGETARCH) -t ${IMAGE_NAME} .
+
+build-x86:
+	@$(MAKE) build TARGETARCH=amd64
+
+build-arm64:
+	@$(MAKE) build TARGETARCH=arm64
 
 serve: DOCKER_RM = --rm
 serve serve-no-rm:
-	@docker run -it -d ${DOCKER_RM} \
+	@echo "+ $@"
+	@docker run -it ${DOCKER_RM} \
 		--name ${CONTAINER_NAME} \
 		-p 25565:25565 \
 		-v /var/run/docker.sock:/var/run/docker.sock \
@@ -48,8 +67,12 @@ serve serve-no-rm:
 logs:
 	@docker logs ${CONTAINER_NAME}
 
+stop:
+	@docker stop ${CONTAINER_NAME}
+
 delete:
 	@docker rm -f ${CONTAINER_NAME}
 
 clean:
-	@docker rmi ${IMAGE_NAME}
+	@docker rmi ${IMAGE_NAME} || true
+	@docker rm -f ${CONTAINER_NAME} || true
