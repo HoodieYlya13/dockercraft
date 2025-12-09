@@ -12,6 +12,11 @@
 
   - `make serve` to run the container
   - `make serve-no-rm` to run the container without removing it when it stops
+  - `make serve-ocean` to run in Ocean biome
+  - `make serve-frozen` to run in FrozenOcean biome
+  - `make serve-desert` to run in Desert biome
+  - `make serve-forest` to run in Forest biome
+  - `make serve-jungle` to run in Jungle biome
   - `make stop` to stop the container
   - `make delete` to delete the container
   - `make logs` to see the logs of the container

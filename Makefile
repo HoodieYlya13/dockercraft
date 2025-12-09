@@ -3,7 +3,7 @@
 REPO_NAME = dockercraft
 REPO_OWNER = docker
 PKG_NAME = github.com/${REPO_OWNER}/${REPO_NAME}
-IMAGE = golang:1.8
+IMAGE = golang:1.23
 IMAGE_NAME = dockercraft
 CONTAINER_NAME = dockercraft
 PACKAGES=$(shell go list ./... | grep -v vendor)
@@ -30,11 +30,11 @@ test:
 
 install-deps:
 	@echo "+ $@"
-	@go get -u github.com/golang/lint/golint
+	@echo "No local dependencies needed for Docker-based linting."
 
 lint:
 	@echo "+ $@"
-	@test -z "$$(golint $(PACKAGES) | tee /dev/stderr)"
+	@docker run --rm -e CGO_ENABLED=0 -e GOTOOLCHAIN=local -v $$(pwd):/app -w /app golangci/golangci-lint:v1.61.0 /bin/sh -c "go get golang.org/x/time@v0.5.0 && go get go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp@v0.49.0 && go get go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp@v1.24.0 && go get golang.org/x/sys@v0.28.0 && go get go.opentelemetry.io/otel@v1.30.0 && go mod tidy && go build -v ./... && golangci-lint run -v"
 
 fmt:
 	@echo "+ $@"
@@ -62,7 +62,22 @@ serve serve-no-rm:
 		--name ${CONTAINER_NAME} \
 		-p 25565:25565 \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		${IMAGE_NAME}
+		${IMAGE_NAME} $(ARGS)
+
+serve-ocean:
+	@$(MAKE) serve ARGS="Ocean 50 63"
+
+serve-frozen:
+	@$(MAKE) serve ARGS="FrozenOcean 50 63 Ice"
+
+serve-desert:
+	@$(MAKE) serve ARGS="Desert 63 0 DeadBushes"
+
+serve-forest:
+	@$(MAKE) serve ARGS="Forest 63 0 Trees"
+
+serve-jungle:
+	@$(MAKE) serve ARGS="Jungle 63 0 Trees"
 
 logs:
 	@docker logs ${CONTAINER_NAME}

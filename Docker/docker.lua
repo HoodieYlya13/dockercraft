@@ -55,7 +55,7 @@ end
 -- updateStats update CPU and memory usage displayed
 -- on container sign (container identified by id)
 function updateStats(id, mem, cpu)
-  for i=1, table.getn(Containers)
+  for i=1, #Containers
   do
     if Containers[i] ~= EmptyContainerSpace and Containers[i].id == id
     then
@@ -69,7 +69,7 @@ end
 -- getStartStopLeverContainer returns the container
 -- id that corresponds to lever at x,y coordinates
 function getStartStopLeverContainer(x, z)
-  for i=1, table.getn(Containers)
+  for i=1, #Containers
   do
     if Containers[i] ~= EmptyContainerSpace and x == Containers[i].x + 1 and z == Containers[i].z + 1
     then
@@ -82,7 +82,7 @@ end
 -- getRemoveButtonContainer returns the container
 -- id and state for the button at x,y coordinates
 function getRemoveButtonContainer(x, z)
-  for i=1, table.getn(Containers)
+  for i=1, #Containers
   do
     if Containers[i] ~= EmptyContainerSpace and x == Containers[i].x + 2 and z == Containers[i].z + 3
     then
@@ -97,7 +97,7 @@ end
 function destroyContainer(id)
   LOG("destroyContainer: " .. id)
   -- loop over the containers and remove the first having the given id
-  for i=1, table.getn(Containers)
+  for i=1, #Containers
   do
     if Containers[i] ~= EmptyContainerSpace and Containers[i].id == id
     then
@@ -109,14 +109,14 @@ function destroyContainer(id)
       -- same index to indicate this is a free space now.
       -- We use a reference to this object because it is not possible to
       -- have 'nil' values in the middle of a lua array.
-      if i == table.getn(Containers)
+      if i == #Containers
       then
         table.remove(Containers, i)
         -- we have removed the last element of the array. If the array
         -- has tailing empty container spaces, we remove them as well.
-        while Containers[table.getn(Containers)] == EmptyContainerSpace
+        while Containers[#Containers] == EmptyContainerSpace
         do
-          table.remove(Containers, table.getn(Containers))
+          table.remove(Containers, #Containers)
         end
       else
         Containers[i] = EmptyContainerSpace
@@ -135,7 +135,7 @@ function updateContainer(id,name,imageRepo,imageTag,state)
 
   -- first pass, to see if the container is
   -- already displayed (maybe with another state)
-  for i=1, table.getn(Containers)
+  for i=1, #Containers
   do
     -- if container found with same ID, we update it
     if Containers[i] ~= EmptyContainerSpace and Containers[i].id == id
@@ -152,7 +152,7 @@ function updateContainer(id,name,imageRepo,imageTag,state)
   local x = CONTAINER_START_X
   local index = -1
 
-  for i=1, table.getn(Containers)
+  for i=1, #Containers
   do
     -- use first empty location
     if Containers[i] == EmptyContainerSpace
@@ -182,7 +182,7 @@ function updateContainer(id,name,imageRepo,imageTag,state)
   -- they're still running, but for some reason stop being displayed until they're updated
   -- this forces them to re-render in world
   LOG("New container detected: Refreshing all...")
-  for i=1, table.getn(Containers)
+  for i=1, #Containers
   do
     LOG("Refreshing container '" .. Containers[i].name .. "'")
 
@@ -249,14 +249,14 @@ end
 
 
 function DockerCommand(Split, Player)
-  if table.getn(Split) > 0
+  if #Split > 0
   then
 
     LOG("Split[1]: " .. Split[1])
 
     if Split[1] == "/docker"
     then
-      if table.getn(Split) > 1
+      if #Split > 1
       then
         if Split[2] == "pull" or Split[2] == "create" or Split[2] == "run" or Split[2] == "stop" or Split[2] == "rm" or Split[2] == "rmi" or Split[2] == "start" or Split[2] == "kill"
         then
