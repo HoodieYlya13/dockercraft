@@ -8,6 +8,17 @@ IMAGE_NAME = dockercraft
 CONTAINER_NAME = dockercraft
 PACKAGES=$(shell go list ./... | grep -v vendor)
 
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
+	TARGETARCH ?= amd64
+else ifeq ($(UNAME_M),aarch64)
+	TARGETARCH ?= arm64
+else ifeq ($(UNAME_M),arm64)
+	TARGETARCH ?= arm64
+else
+	TARGETARCH ?= amd64
+endif
+
 all: test
 
 test-local: install-deps fmt lint vet
@@ -35,7 +46,14 @@ vet:
 
 build:
 	@echo "+ $@"
-	@docker build -t ${IMAGE_NAME} .
+	@echo "Building for $(TARGETARCH)"
+	@docker build --build-arg TARGETARCH=$(TARGETARCH) -t ${IMAGE_NAME} .
+
+build-x86:
+	@$(MAKE) build TARGETARCH=amd64
+
+build-arm64:
+	@$(MAKE) build TARGETARCH=arm64
 
 serve: DOCKER_RM = --rm
 serve serve-no-rm:

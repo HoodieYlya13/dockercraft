@@ -6,25 +6,30 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -mod=mod -o dockercraft .
+ARG TARGETARCH=arm64
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -mod=mod -o dockercraft .
 
 FROM alpine:3.19 AS docker-cli
 ARG DOCKER_VERSION=25.0.3
+ARG TARGETARCH=arm64
 RUN apk add --no-cache wget tar && \
-  wget -qO- https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VERSION}.tgz | \
+  if [ "$TARGETARCH" = "amd64" ]; then ARCH="x86_64"; else ARCH="aarch64"; fi && \
+  wget -qO- https://download.docker.com/linux/static/stable/${ARCH}/docker-${DOCKER_VERSION}.tgz | \
   tar -xvz --strip-components=1 -C /bin
 
 FROM alpine:3.19 AS cuberite-downloader
 WORKDIR /srv
+ARG TARGETARCH=arm64
 RUN apk add --no-cache wget tar git && \
-  wget -qO- "https://download.cuberite.org/linux-aarch64/Cuberite.tar.gz" | \
+  if [ "$TARGETARCH" = "amd64" ]; then ARCH="x86_64"; else ARCH="aarch64"; fi && \
+  wget -qO- "https://download.cuberite.org/linux-${ARCH}/Cuberite.tar.gz" | \
   tar -xzf - && \
   mkdir -p /srv/Server/Plugins && \
   git clone https://github.com/cuberite/Core.git /srv/Server/Plugins/Core && \
   git clone https://github.com/cuberite/TransAPI.git /srv/Server/Plugins/TransAPI && \
   git clone https://github.com/cuberite/ChatLog.git /srv/Server/Plugins/ChatLog
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && \
   apt-get install -y ca-certificates && \
