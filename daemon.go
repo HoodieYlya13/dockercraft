@@ -13,12 +13,12 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
+	log "github.com/sirupsen/logrus"
 )
 
 // TCPMessage defines what a message that can be
@@ -113,6 +113,9 @@ func (d *Daemon) Init() error {
 func (d *Daemon) Serve() {
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", ":25566")
+	if err != nil {
+		log.Fatalln("resolve tcp error:", err)
+	}
 
 	ln, err := net.ListenTCP("tcp", tcpAddr)
 	if err != nil {
@@ -323,13 +326,13 @@ func (d *Daemon) eventCallback(event events.Message) {
 
 	default:
 		// Ignoring
-		log.Debug("Ignoring event: %s", event.Status)
+		log.Debugf("Ignoring event: %s", event.Status)
 	}
 }
 
 // statCallback receives the stats (cpu & ram) from containers and send them to
 // the cuberite server
-func (d *Daemon) statCallback(id string, stats *types.StatsJSON, args ...interface{}) {
+func (d *Daemon) statCallback(id string, stats *types.StatsJSON) {
 	containerEvent := ContainerEvent{}
 	containerEvent.ID = id
 	containerEvent.Action = "stats"
@@ -506,11 +509,11 @@ func calculateCPUPercent(previousCPUStats *CPUStats, newCPUStats *types.CPUStats
 	)
 
 	if systemDelta > 0.0 && cpuDelta > 0.0 {
-		numCpu := float64(len(newCPUStats.CPUUsage.PercpuUsage))
-		if numCpu == 0.0 {
-			numCpu = float64(newCPUStats.OnlineCPUs)
+		numCPU := float64(len(newCPUStats.CPUUsage.PercpuUsage))
+		if numCPU == 0.0 {
+			numCPU = float64(newCPUStats.OnlineCPUs)
 		}
-		cpuPercent = (cpuDelta / systemDelta) * numCpu * 100.0
+		cpuPercent = (cpuDelta / systemDelta) * numCPU * 100.0
 	}
 	return cpuPercent
 }

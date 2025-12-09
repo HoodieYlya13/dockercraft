@@ -1,5 +1,5 @@
-@9Welcome to Dockercraft!
-@9https://github.com/docker/dockercraft
-@cWarning: Use on your local machine only
-@cDockercraft is not safe for use on production servers
-@9Type /docker to use docker CLI commands!
+Welcome to Dockercraft!
+https://github.com/HoodieYlya13/dockercraft
+Warning: Use on your local machine only
+Dockercraft is not safe for use on production servers
+Type /docker to use docker CLI commands!

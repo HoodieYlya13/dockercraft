@@ -9,3 +9,4 @@ goproxy/goproxy
 dockercraft
 .idea
 logs.txt
+/bin

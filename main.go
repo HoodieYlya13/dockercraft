@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
+
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 // The main purpose of this application is to connect the docker daemon
@@ -24,12 +24,10 @@ func main() {
 	daemon := NewDaemon()
 	if err := daemon.Init(); err != nil {
 		log.Fatal(err.Error())
-		os.Exit(1)
 	}
 
 	if err := daemon.GetDockerBinary(); err != nil {
 		log.Fatal(err.Error())
-		os.Exit(1)
 	}
 
 	go daemon.StartMonitoringEvents()
