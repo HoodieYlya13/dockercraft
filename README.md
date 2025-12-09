@@ -1,6 +1,7 @@
 ### TL;DR
 
 - Works with Minecraft versions `1.8 - 1.12.2`.
+- Works on ARM and x86 architectures (NEW)!
 - Run :
 
   - `make build` to build the image (the first time)
