@@ -8,6 +8,17 @@ IMAGE_NAME = dockercraft
 CONTAINER_NAME = dockercraft
 PACKAGES=$(shell go list ./... | grep -v vendor)
 
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
+	TARGETARCH ?= amd64
+else ifeq ($(UNAME_M),aarch64)
+	TARGETARCH ?= arm64
+else ifeq ($(UNAME_M),arm64)
+	TARGETARCH ?= arm64
+else
+	TARGETARCH ?= amd64
+endif
+
 all: test
 
 test-local: install-deps fmt lint vet
