@@ -27,7 +27,13 @@ RUN apk add --no-cache wget tar git && \
   mkdir -p /srv/Server/Plugins && \
   git clone https://github.com/cuberite/Core.git /srv/Server/Plugins/Core && \
   git clone https://github.com/cuberite/TransAPI.git /srv/Server/Plugins/TransAPI && \
-  git clone https://github.com/cuberite/ChatLog.git /srv/Server/Plugins/ChatLog
+  git clone https://github.com/cuberite/ChatLog.git /srv/Server/Plugins/ChatLog && \
+  wget -O /srv/Server/Plugins/InfoReg.lua https://raw.githubusercontent.com/cuberite/Cuberite/master/Server/Plugins/InfoReg.lua && \
+  mv webadmin Server/ && \
+  mv *.txt Server/ && \
+  mv *.ini Server/ && \
+  mv Protocol Server/ && \
+  mv Prefabs Server/
 
 FROM debian:trixie-slim
 
