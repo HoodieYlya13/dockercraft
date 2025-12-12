@@ -10,7 +10,7 @@ ARG TARGETARCH=arm64
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -mod=mod -o dockercraft .
 
 FROM alpine:3.19 AS docker-cli
-ARG DOCKER_VERSION=25.0.3
+ARG DOCKER_VERSION=29.1.3
 ARG TARGETARCH=arm64
 RUN apk add --no-cache wget tar && \
   if [ "$TARGETARCH" = "amd64" ]; then ARCH="x86_64"; else ARCH="aarch64"; fi && \
