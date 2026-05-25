@@ -58,3 +58,4 @@
   },
   "lessons_learned": "Reviving a decade-old, abandoned open-source project teaches critical lessons about software rot, architectural decoupling, and the challenges of embedding system orchestrations inside game engines. First, relying on external, runtime-downloaded binaries is a major anti-pattern; shifting to container-native multi-stage pre-bundling dramatically increases predictability and build resilience. Second, when bridging system-level events (like Docker containers) with rendering loops (like a Minecraft server), strict throttle and queue mechanisms are indispensable; direct synchronous writes to the world state quickly lead to engine blockages and thread starvation. Finally, ensuring multi-arch compatibility (ARM64 & x86_64) from day one is essential in modern development environments, especially for local dev tools where modern developers heavily utilize Apple Silicon."
 }
+
